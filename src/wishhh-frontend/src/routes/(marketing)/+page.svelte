@@ -1,16 +1,9 @@
-<script>
-
-</script>
-
 <svelte:head>
-	<title>Wishhh</title>
-	<meta name='description' content='Svelte demo app' />
+	<title>JOPS</title>
 </svelte:head>
 
-<section>
-	<h1>ABOUT WISHHH</h1>
-</section>
+<a href='/wishlists'>to wishlists</a>
 
-<style>
-
+<style lang='less'>
+	
 </style>

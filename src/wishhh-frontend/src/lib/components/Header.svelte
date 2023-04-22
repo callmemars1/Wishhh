@@ -1,61 +1,81 @@
-<script lang='ts'>
-	import cat from '$lib/images/cat.jpg';
-	import './Styles/Header.css';
-	import Profile from './Profile.svelte';
-	import { onMount } from 'svelte';
+<script>
+	import MenuItem from './MenuItem.svelte';
+	import Menu from './Menu.svelte';
+	import Logo from './Logo.svelte';
+	import NavPanel from './NavPanel.svelte';
+	import TextButton from './TextButton.svelte';
 
-	let showText = true;
-	let widthWrapper: HTMLElement;
-	let checkBox: HTMLInputElement;
-	let width: number;
-
-	const adjustElementsAccordingToWindowSize = () => {
-		if (innerWidth <= 400) {
-			showText = false;
-			width = widthWrapper.clientWidth * 0.8;
-		}
-		else if (innerWidth >= 400 && innerWidth < 1200) {
-			showText = true;
-			width = widthWrapper.clientWidth * 0.8
-		}
-		else if (innerWidth >= 1200) {
-			checkBox.checked = false
-			checkBox = checkBox
-			showText = false;
-			width = 40
-		}
-	};
-
-	onMount(adjustElementsAccordingToWindowSize)
+	let panelOpen = false;
 </script>
 
-<svelte:window on:resize={adjustElementsAccordingToWindowSize} />
+<div class='header'>
 
-<nav>
-	<a href='/wishlists' class='logo'>Wishhh</a>
-	<div class='links'>
-		<menu class='menu-items' bind:this={widthWrapper}>
-			<li><a href='/wishlists'>Wishhh</a></li>
-			<li><a href='/wishlists'>Мои желания</a></li>
-			<li><a href='/gifts'>Хочу подарить</a></li>
-			<li>
-				<hr style='width: 90%; background-color: white'>
-				<a href='/profile'>
-					<Profile shouldShowText={showText}
-									 photoSrc={cat}
-									 userName='Pizdabol ivanovich'
-									 style='width: {0.8*width}px;'
-					/>
-				</a>
-			</li>
-		</menu>
-		<input 
-			type='checkbox' 
-			id='menu-checkbox-1' 
-			class='menu-checkbox' 
-			on:change={adjustElementsAccordingToWindowSize}
-			bind:this={checkBox}
-		/>
-		<label for='menu-checkbox-1' class='menu-btn'>&#9776;</label>
+	<div class='logo'>
+		<a href='/'>
+			<Logo />
+		</a>
 	</div>
-</nav>
+
+	<nav class='only-desktop'>
+		<Menu>
+			<MenuItem label='cringe' />
+			<MenuItem label='cringe' />
+			<MenuItem label='cringe' />
+		</Menu>
+	</nav>
+
+	<div class='only-mobile'>
+		<TextButton text='&#9776;' on:click={() => panelOpen = true}/>
+	</div>
+</div>
+
+<div class='nav-panel only-mobile'>
+	<NavPanel bind:open={panelOpen}>
+		<MenuItem label='cringe' />
+		<MenuItem label='cringe' />
+		<MenuItem label='cringe' />
+	</NavPanel>
+</div>
+
+<style lang='less'>
+  @import "../themes/default";
+
+	.shadow() {
+    -webkit-box-shadow: 0 8px 17px 2px @accentBackgroundColor;
+    -moz-box-shadow: 0 8px 17px 2px @accentBackgroundColor;
+    box-shadow: 0 8px 17px 2px @accentBackgroundColor;
+	}
+	
+  .header {
+    font: @monoFont;
+    background: @accentBackgroundColor;
+    color: @accentForegroundColor;
+		.shadow();
+
+    display: flex;
+    min-height: 60px;
+
+    justify-content: space-around;
+    align-items: center;
+
+    gap: 10%;
+  }
+
+  .only-mobile {
+    display: none;
+  }
+	
+  @media (max-width: 768px) {
+    .only-desktop {
+      display: none;
+    }
+
+    .only-mobile {
+      display: flex;
+    }
+
+    .nav-panel {
+      display: contents;
+    }
+  }
+</style>
