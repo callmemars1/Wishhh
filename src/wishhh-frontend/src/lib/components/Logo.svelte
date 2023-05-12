@@ -1,10 +1,6 @@
-<span>wishhh</span>
+<script lang="ts">
+    import Icon from './Icon.svelte';
+    export let size: string = '40px';
+</script>
 
-<style lang='less'>
-	@import "../themes/default";
-	
-	span {
-		font: @monoFont;
-		color: @accentForegroundColor;
-	}
-</style>
+<Icon name="logo" size="{size}"/>

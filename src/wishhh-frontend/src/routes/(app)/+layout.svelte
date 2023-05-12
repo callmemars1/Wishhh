@@ -1,43 +1,61 @@
 <script>
-	import Header from '../../lib/components/Header.svelte';
-	import Footer from '../../lib/components/Footer.svelte';
+    import Header from '../../lib/components/Header.svelte';
+    import Footer from '../../lib/components/Footer.svelte';
 </script>
 
 <div class='wrapper'>
-	<div class='main-content'>
-		<div class='sticky'>
-			<Header />
-		</div>
-		<slot />
-	</div>
-	<footer>
-		<Footer />
-	</footer>
+    <header>
+        <Header/>
+    </header>
+    <main>
+        <slot/>
+    </main>
+    <footer>
+        <Footer/>
+    </footer>
 </div>
 
-<style>
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 40px;
+<style lang='less'>
+  @import "../../../src/lib/themes/default";
 
-        align-items: center;
-        width: 100%;
-    }
-		
-		.main-content {
-				width: 100%;
-		}
+  .wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    background: @mainBackground;
+    color: @foregroundColor;
+    width: 100%;
+    min-height: 100vh;
+  }
 
-    .sticky {
-        position: sticky;
-        top: 0;
-        width: 100%;
-    }
+  header {
+    z-index: 1;
+    top: 0;
+    position: sticky;
 
-    footer {
-        width: 80%;
-        margin-top: auto;
-    }
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  main {
+    z-index: 0;
+    width: 100%;
+    max-width: @view-max-width;
+
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 25px;
+
+  }
+
+  footer {
+    width: 100%;
+
+    height: @footer-size;
+    max-width: @view-max-width;
+  }
 </style>
 	

@@ -5,11 +5,11 @@
 <span on:click>{text}</span>
 
 <style lang='less'>
-  @import "../themes/default";
+  @import "../../themes/default";
 
   span {
 		font: @font;
-		color: @accentForegroundColor;
+		color: inherit;
 		user-select: none;
   }
 	

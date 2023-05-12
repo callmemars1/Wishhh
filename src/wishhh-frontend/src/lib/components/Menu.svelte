@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let horizontal: boolean = true;
 	
-	$: cssHorizontal = horizontal ? 'horizontal' : 'vertical';
+	let cssHorizontal = horizontal ? 'horizontal' : 'vertical';
 </script>
 
 <menu class={cssHorizontal}>
@@ -12,6 +12,7 @@
 	menu {
 			display: flex;
 			gap: 40px;
+			align-items: center;
 	}
 	
 	.vertical {

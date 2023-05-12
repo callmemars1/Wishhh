@@ -1,22 +1,22 @@
 <script context='module' lang='ts'>
-	const icons = import.meta.glob('../assets/*.svg', { as: 'raw', eager: true });
-	const notFound = '‽';
+    const icons = import.meta.glob('../assets/*.svg', {as: 'raw', eager: true});
+    const notFound = '‽';
 
-	function rawSVG(name: string) {
-		return icons[`../assets/${name}.svg`];
-	}
+    function rawSVG(name: string) {
+        return icons[`../assets/${name}.svg`];
+    }
 </script>
 
 <script lang='ts'>
-	export let name: string;
-	export let size: string | undefined;
+    export let name: string;
+    export let size: string | undefined;
 </script>
 
 <div
-	class='icon'
-	style='max-width: {size};max-height: {size};min-width: {size};min-height: {size};'
+        class='icon'
+        style='max-width: {size};max-height: {size};min-width: {size};min-height: {size};'
 >
-	{@html rawSVG(name) || notFound}
+    {@html rawSVG(name) || notFound}
 </div>
 
 <style lang='less'>
@@ -26,6 +26,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: inherit;
+  }
+
+  .icon:hover {
     color: @accentColor;
+    cursor: pointer;
   }
 </style>

@@ -1,70 +1,87 @@
 <script>
-	import MenuItem from './MenuItem.svelte';
-	import Menu from './Menu.svelte';
-	import Logo from './Logo.svelte';
-	import NavPanel from './NavPanel.svelte';
-	import TextButton from './TextButton.svelte';
+    import MenuItem from './MenuItem.svelte';
+    import Menu from './Menu.svelte';
+    import Logo from './Logo.svelte';
+    import NavPanel from './NavPanel.svelte';
+    import TextButton from './controls/TextButton.svelte';
+    import Profile from './Profile.svelte';
 
-	let panelOpen = false;
+    let panelOpen = false;
+    const closePanel = () => panelOpen = false;
 </script>
 
 <div class='header'>
 
-	<div class='logo'>
-		<a href='/'>
-			<Logo />
-		</a>
-	</div>
+    <div class='links'>
+        <div class='logo'>
+            <a href='/'>
+                <Logo/>
+            </a>
+        </div>
 
-	<nav class='only-desktop'>
-		<Menu>
-			<MenuItem label='cringe' />
-			<MenuItem label='cringe' />
-			<MenuItem label='cringe' />
-		</Menu>
-	</nav>
+        <nav class='only-desktop'>
+            <Menu>
+                <MenuItem label='желания' targetUrl='/wishlists'/>
+                <MenuItem label='подарки' targetUrl='/gifts'/>
+                <MenuItem targetUrl='/profile'>
+                    <Profile />
+                </MenuItem>
+            </Menu>
+        </nav>
 
-	<div class='only-mobile'>
-		<TextButton text='&#9776;' on:click={() => panelOpen = true}/>
-	</div>
+        <div class='only-mobile'>
+            <TextButton text='&#9776;' on:click={() => panelOpen = true}/>
+        </div>
+    </div>
+
 </div>
 
 <div class='nav-panel only-mobile'>
-	<NavPanel bind:open={panelOpen}>
-		<MenuItem label='cringe' />
-		<MenuItem label='cringe' />
-		<MenuItem label='cringe' />
-	</NavPanel>
+    <NavPanel bind:open={panelOpen}>
+        <MenuItem label='wishes' targetUrl='/wishlists' on:click={closePanel}/>
+        <MenuItem label='gifts' targetUrl='/gifts' on:click={closePanel}/>
+        <MenuItem targetUrl='/profile' on:click={closePanel}>
+            <Profile/>
+        </MenuItem>
+    </NavPanel>
 </div>
 
 <style lang='less'>
   @import "../themes/default";
 
-	.shadow() {
-    -webkit-box-shadow: 0 8px 17px 2px @accentBackgroundColor;
-    -moz-box-shadow: 0 8px 17px 2px @accentBackgroundColor;
-    box-shadow: 0 8px 17px 2px @accentBackgroundColor;
-	}
-	
   .header {
-    font: @monoFont;
-    background: @accentBackgroundColor;
-    color: @accentForegroundColor;
-		.shadow();
+    font: @headerFont;
+    color: @headerForegroundColor;
+    background: @mainBackground;
+    border-radius: 5px;
 
     display: flex;
-    min-height: 60px;
+    min-height: @header-size;
+    max-height: @header-size;
 
     justify-content: space-around;
     align-items: center;
+    z-index: 1000;
+  }
 
+  .links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: @view-max-width;
+    padding: 0 50px;
     gap: 10%;
+  }
+
+  .logo:hover {
+    scale: 1.05;
   }
 
   .only-mobile {
     display: none;
   }
-	
+
   @media (max-width: 768px) {
     .only-desktop {
       display: none;
