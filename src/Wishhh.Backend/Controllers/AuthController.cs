@@ -17,7 +17,7 @@ public class AuthController : Controller
     [HttpPost("sign-up")]
     public async Task<IResult> SignUpAsync(SignUpRequestDto request)
     {
-        \
+        
     }
 
     [HttpPost("sign-in")]

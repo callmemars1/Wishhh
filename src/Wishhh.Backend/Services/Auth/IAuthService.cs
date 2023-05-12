@@ -38,26 +38,7 @@ class AuthService : IAuthService
 
     public Task<OneOf<SignedInResult, SignInFailed>> SignInAsync(SignInRequest request)
     {
-        
-    }
-
-    private string GenerateJwtToken(string userId)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, userId),
-            }),
-            Expires = DateTime.UtcNow.AddDays(7),
-            Issuer = _jwtSettings.CurrentValue.Issuer,
-            Audience = _jwtSettings.CurrentValue.Audience,
-            SigningCredentials = new SigningCredentials(_jwtSettings.CurrentValue.Key, SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        throw new NotImplementedException();
     }
 
     public Task<OneOf<SignedOutResult>> SignOutAsync(SignOutRequest request)
