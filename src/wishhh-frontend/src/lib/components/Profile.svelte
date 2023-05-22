@@ -1,12 +1,21 @@
-<script>
-    import photo from '../assets/avatar.jpeg';
+<script lang="ts">
+    import PreloaderField from '$lib/components/PreloaderField.svelte';
+    
+    export let name: string = ""
+    export let imageUri: string = ""
+    export let loading: boolean = false
 </script>
 
 <div class='profile'>
-    <span>Sergey Martynov</span>
-    <div class='profile-photo'>
-        <img src={photo} alt=''>
-    </div>
+    {#if loading}
+        <PreloaderField width="120px" height="25px"/>
+        <PreloaderField width="40px" height="40px" radius="50%"/>
+    {:else }
+        <span>{name}</span>
+        <div class='profile-photo'>
+            <img src={imageUri} alt='photo'>
+        </div>
+    {/if}
 </div>
 
 <style lang='less'>

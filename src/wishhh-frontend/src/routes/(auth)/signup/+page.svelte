@@ -1,12 +1,43 @@
 <script lang="ts">
     import Button from '$lib/components/controls/Button.svelte';
-    import TextInput from '$lib/components/controls/TextInput.svelte';
     import Logo from '$lib/components/Logo.svelte';
+    import Icon from '$lib/components/Icon.svelte';
+    import ValidatableFormInput from '$lib/components/ValidatableFormInput.svelte';
+    import {RequestValidationError, createSingleMessage} from "$lib/utils/requestUtilities"
+    import {
+        trySignUpAndThenSignIn,
+        SignupRequest
+    } from '$lib/services/auth';
+    import {goto} from '$app/navigation';
 
     let login: string;
-    let password: string;
+    let loginError = ""
     
-    let result: string;
+    let password: string;
+    let passwordError = ""
+    
+    let name: string;
+    let nameError = ""
+
+    let promise: Promise<void>
+    
+    const nullOrEmpty = (value: string) => value === null || value.length === 0;
+
+    const processResponse = async () => {
+        try {
+            await trySignUpAndThenSignIn(new SignupRequest(login, password, name))
+            await goto('/wishlists')
+        } catch (error: RequestValidationError) {
+            let errors = error.getErrors();
+            loginError = createSingleMessage(errors['Username']);
+            passwordError = createSingleMessage(errors['Password']);
+            nameError = createSingleMessage(errors['DisplayName']);
+        }
+    }
+    
+    const handleFormSubmit = async () => {
+        promise = processResponse()
+    }
 </script>
 
 <svelte:head>
@@ -14,44 +45,47 @@
 </svelte:head>
 
 <div>
+    {#await promise}
+        <div class="preloader">
+            <Icon name="preloader" size="256px"/>
+        </div>
+    {/await}
     <form action="POST">
         <h2 class='two-columns form-header'>
             создать аккаунт
         </h2>
 
-        <label for="login">Логин</label>
-        <TextInput
+        <ValidatableFormInput
+                label="Логин"
                 bind:inputValue={login}
-                id="login"
-                placeholder='логин'
-                required
+                placeholder="логин"
+                errorValue="{loginError}"
         />
 
-        <label for="password">Пароль</label>
-        <TextInput
+        <ValidatableFormInput
+                label="Пароль"
                 bind:inputValue={password}
-                id="password"
-                placeholder='пароль'
+                placeholder="пароль"
+                errorValue={passwordError}
                 isPassword
-                required
         />
 
-        <label for="name">Имя</label>
-        <TextInput
-                id="name"
-                placeholder='имя'
-                required
+        <ValidatableFormInput
+                label="Имя в профиле"
+                bind:inputValue={name}
+                placeholder="имя"
+                errorValue="{nameError}"
         />
 
-        <label for="avatar">Аватар:</label>
-        <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg"/>
         <div class="two-columns">
-            <Button>Создать аккаунт</Button>
+            <Button on:click={handleFormSubmit}>
+                <span>Создать аккаунт</span>
+            </Button>
         </div>
     </form>
     <div class="links">
         <a href="/">
-            <Logo size="20px "/>
+            <Logo size="30px"/>
         </a>
         <a href="/signin">уже есть аккаунт</a>
     </div>
@@ -60,11 +94,22 @@
 <style lang="less">
   @import '../../../lib/themes/default';
 
+  .preloader {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    width: min-content;
+  }
+
   .links {
     margin-top: 10px;
     display: inline-flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
+    font-size: large;
 
     a:hover {
       cursor: pointer;
@@ -81,39 +126,21 @@
   }
 
   form {
-    border-bottom: 2px solid @accentBackgroundColor;
-    border-top: 2px solid @accentBackgroundColor;
-    padding: 30px;
+    padding-bottom: 50px;
+    border-bottom: 3px solid lighten(@foregroundColor, 50%);
     display: grid;
+    align-items: flex-start;
     grid-template-columns: auto auto;
-    grid-column-gap: 20px;
+    grid-column-gap: 40px;
     grid-row-gap: 30px;
+    font-size: 20px;
+  }
+
+  label {
+    margin-top: 100px;
   }
 
   .two-columns {
     grid-column: span 2;
-  }
-
-  .avatar {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-  }
-
-  input[type='file'] {
-    &::file-selector-button {
-      background: none;
-      border: 2px solid @accentColor;
-      color: inherit;
-      border-radius: 5px;
-      cursor: pointer;
-
-      &:hover {
-        background: @accentColor;
-      }
-    }
-
-
   }
 </style>

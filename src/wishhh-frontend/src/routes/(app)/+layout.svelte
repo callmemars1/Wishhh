@@ -1,11 +1,28 @@
-<script>
-    import Header from '../../lib/components/Header.svelte';
-    import Footer from '../../lib/components/Footer.svelte';
+<script lang="ts">
+    import Header from '$lib/components/Header.svelte';
+    import Footer from '$lib/components/Footer.svelte';
+    import {updateUserDataStores} from '$lib/services/user';
+    import {ensureAuthenticated} from '$lib/services/auth';
+    import {
+        displayName,
+        imageUri
+    } from '$lib/utils/stores'
+    
+    const processResponse = async () => {
+        await ensureAuthenticated()
+        await updateUserDataStores()
+    }
+
+    let promise: Promise<void> = processResponse()
 </script>
 
 <div class='wrapper'>
     <header>
-        <Header/>
+        {#await promise}
+            <Header loading/>
+        {:then _}
+            <Header displayName={$displayName} imageUri={$imageUri}/>
+        {/await}
     </header>
     <main>
         <slot/>

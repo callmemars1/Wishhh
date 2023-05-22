@@ -1,26 +1,36 @@
 <script lang='ts'>
     import Icon from './Icon.svelte';
     import ImageStacked from './ImageStacked.svelte';
+    import PreloaderField from './PreloaderField.svelte';
 
     export let name: string;
     export let isPrivate: boolean = false;
+    export let loading: boolean = false;
 
     let eyeName = isPrivate ? 'private-eye' : 'public-eye';
 </script>
 
 <div class='wishlist'>
     <div class='image'>
-        <ImageStacked>
-            <Icon name='wishlistImage' size='200px' slot='background'/>
-            <div class='p-10 access' slot='top-left'>
-                <Icon name={eyeName} size='40px'/>
-            </div>
-            <div class='letter' slot='center'>
-                {name[0]}
-            </div>
-        </ImageStacked>
+        {#if loading}
+            <PreloaderField width="200px" height="200px" radius="15px"/>
+        {:else }
+            <ImageStacked>
+                <Icon name='wishlistImage' size='200px' slot='background'/>
+                <div class='p-10 access' slot='top-left'>
+                    <Icon name={eyeName} size='40px'/>
+                </div>
+                <div class='letter' slot='center'>
+                    {name[0]}
+                </div>
+            </ImageStacked>
+        {/if}
     </div>
-    <span class='name'>{name}</span>
+    {#if loading}
+        <PreloaderField width="12ch" height="1em" radius="10px"/>
+    {:else }
+        <span class='name'>{name}</span>
+    {/if}
 </div>
 
 <style lang='less'>

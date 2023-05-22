@@ -1,0 +1,45 @@
+## STATIC CONFIGURATION
+log:
+  level: INFO
+
+api:
+  insecure: true
+  dashboard: true
+
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  docker:
+    watch: true
+    endpoint: "unix:///var/run/docker.sock"
+  file:
+    filename: "traefik.yml"
+
+
+## DYNAMIC CONFIGURATION
+http:
+  routers:
+    to-frontend:
+      rule: "Host(`localhost`)"
+      service: frontend
+      entryPoints:
+        - web
+          
+    to-backend:
+      rule: "Host(`localhost`) && PathPrefix(`/api`)"
+      service: backend
+      entryPoints:
+        - web
+
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:5173"
+
+    backend:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:5258"

@@ -1,9 +1,9 @@
 using Google.Cloud.Firestore;
 
-namespace Wishhh.Backend.Model.Users;
+namespace Wishhh.Backend.Model;
 
 [FirestoreData]
-public class User
+public record User
 {
     [FirestoreDocumentId]
     public string Id { get; init; }

@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Wishhh.Backend.Model.Users;
 
 namespace Wishhh.Backend.Model.Password;
 

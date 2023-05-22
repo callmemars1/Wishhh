@@ -22,16 +22,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
-
+    
     white-space: nowrap;
     padding: 0.2em;
-    border-radius: 0.5em;
+    border-radius: 10px;
   }
 
   a:hover {
-    border-bottom: 2px solid @accentColor;
-    border-top: 2px solid @accentColor;
+    color: @accentColor;
+    scale: 1.1;
     transition: all 0.1s;
   }
 </style>

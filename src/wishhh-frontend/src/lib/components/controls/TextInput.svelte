@@ -2,26 +2,31 @@
     export let placeholder: string;
     export let inputValue: string = '';
     export let isPassword: boolean = false;
-    export let required: boolean = false;
-    export let id: string;
-
-    $: inputType = isPassword ? 'password' : 'text';
+    export let idValue: string;
 </script>
 
-<input
-        id={id}
-        bind:value={inputValue}
-        placeholder={placeholder}
-        required={required}
-/>
+{#if isPassword}
+    <input
+            id={idValue}
+            bind:value={inputValue}
+            placeholder={placeholder}
+            type="password"
+    />
+{:else }
+    <input
+            id={idValue}
+            bind:value={inputValue}
+            placeholder={placeholder}
+    />
+{/if}
 
 <style lang='less'>
   @import '../../themes/default';
 
   input {
+    border-radius: 0;
     color: inherit;
     font: @monoFont;
-    font-size: @size-xs;
     background: none;
     outline: none;
     border: none;

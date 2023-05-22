@@ -1,11 +1,15 @@
-<script>
+<script lang="ts">
     import MenuItem from './MenuItem.svelte';
     import Menu from './Menu.svelte';
     import Logo from './Logo.svelte';
     import NavPanel from './NavPanel.svelte';
     import TextButton from './controls/TextButton.svelte';
     import Profile from './Profile.svelte';
-
+    
+    export let displayName: string = "";
+    export let imageUri: string = "";
+    export let loading: boolean = false;
+    
     let panelOpen = false;
     const closePanel = () => panelOpen = false;
 </script>
@@ -24,7 +28,7 @@
                 <MenuItem label='желания' targetUrl='/wishlists'/>
                 <MenuItem label='подарки' targetUrl='/gifts'/>
                 <MenuItem targetUrl='/profile'>
-                    <Profile />
+                    <Profile name={displayName} imageUri={imageUri} loading={loading}/>
                 </MenuItem>
             </Menu>
         </nav>
@@ -41,7 +45,7 @@
         <MenuItem label='wishes' targetUrl='/wishlists' on:click={closePanel}/>
         <MenuItem label='gifts' targetUrl='/gifts' on:click={closePanel}/>
         <MenuItem targetUrl='/profile' on:click={closePanel}>
-            <Profile/>
+            <Profile name={displayName} imageUri={imageUri} loading={loading}/>
         </MenuItem>
     </NavPanel>
 </div>
@@ -52,7 +56,7 @@
   .header {
     font: @headerFont;
     color: @headerForegroundColor;
-    background: @mainBackground;
+    background: @headerBackgroundColor;
     border-radius: 5px;
 
     display: flex;

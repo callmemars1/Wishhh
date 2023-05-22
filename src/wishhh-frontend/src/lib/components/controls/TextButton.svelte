@@ -1,5 +1,5 @@
 <script lang='ts'>
-	export let text: string;
+    export let text: string;
 </script>
 
 <span on:click>{text}</span>
@@ -8,13 +8,13 @@
   @import "../../themes/default";
 
   span {
-		font: @font;
-		color: inherit;
-		user-select: none;
+    font: @font;
+    color: inherit;
+    user-select: none;
   }
-	
-	span:hover {
+
+  span:hover {
     cursor: pointer;
     color: @accentColor;
-	}
+  }
 </style>

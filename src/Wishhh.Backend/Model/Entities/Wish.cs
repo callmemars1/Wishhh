@@ -1,9 +1,9 @@
 using Google.Cloud.Firestore;
 
-namespace Wishhh.Backend.Model.Users;
+namespace Wishhh.Backend.Model;
 
 [FirestoreData]
-public class Wish
+public record Wish
 {
     [FirestoreDocumentId]
     public string Id { get; set; }

@@ -1,5 +1,11 @@
+using System.Security.Claims;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Wishhh.Backend.Services.Auth;
+using Wishhh.Backend.Model.Auth;
+using Wishhh.Backend.Services;
 
 namespace Wishhh.Backend.Controllers;
 
@@ -7,40 +13,98 @@ namespace Wishhh.Backend.Controllers;
 [Route("api/auth")]
 public class AuthController : Controller
 {
-    private readonly IAuthService _authService;
+    private readonly IUserService _userService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IUserService userService)
     {
-        _authService = authService;
+        _userService = userService;
     }
 
     [HttpPost("sign-up")]
-    public async Task<IResult> SignUpAsync(SignUpRequestDto request)
+    public async Task<IResult> SignUpAsync(
+        [FromBody] SignUpRequestDto request,
+        [FromServices] IValidator<SignUpRequestDto> requestValidator)
     {
-        
+        var validationResult = await requestValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        try
+        {
+            var user =
+                await _userService.CreateUserAsync(request.Username, request.Password, request.DisplayName);
+            return Results.Json(new SignUpSuccessful(user.Id));
+        }
+        catch (Exception e)
+        {
+            return Results.Problem(e.Message);
+        }
     }
 
     [HttpPost("sign-in")]
-    public async Task<IResult> SignInAsync(SignInRequestDto request) => Results.Empty;
-    
-    [HttpPost("sing-out")]
-    public async Task<IResult> SignOutAsync(SignOutRequestDto request) => Results.Empty;
+    public async Task<IResult> SignInAsync([FromBody] SignInRequestDto request)
+    {
+        var checkCredentialsResult =
+            await _userService.CheckCredentialsAsync(request.Username, request.Password);
+
+        if (!checkCredentialsResult.Ok)
+            return Results.ValidationProblem(checkCredentialsResult.ToErrorsDictionary()!);
+
+        var claims = new[]
+        {
+            new Claim(AuthClaims.UserId, checkCredentialsResult.User!.Id)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                AllowRefresh = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                IssuedUtc = DateTimeOffset.UtcNow,
+            });
+
+        return Results.StatusCode(200);
+    }
+
+    [HttpPost("sign-out")]
+    public async Task<IResult> SignOutAsync()
+    {
+        await HttpContext.SignOutAsync();
+        return Results.StatusCode(200);
+    }
+
+    [Authorize]
+    [HttpGet("auth-check")]
+    public IResult AuthCheck() => Results.StatusCode(200);
 }
 
-public record SignUpRequestDto
-{
-    public string Username { get; init; }
-    public string Password { get; init; }
-    public string DisplayName { get; init; }
-    public IFormFile Image { get; init; }
-}
+public record SignUpRequestDto(string Username, string Password, string DisplayName);
 
-public record SignInRequestDto
-{
-    public string Username { get; init; }
-    public string Password { get; init; }
-}
+public record SignUpSuccessful(string UserId);
 
-public class SignOutRequestDto
+
+public record SignInRequestDto(string Username, string Password);
+
+public static class CheckCredentialsResultHelper
 {
+    public static Dictionary<string, string[]>? ToErrorsDictionary(this CheckCredentialsResult result)
+    {
+        if (result.Ok)
+            return null;
+
+        var dict = new Dictionary<string, string[]>();
+        
+        if (result.UserFound.HasValue && !result.UserFound.Value) 
+            dict.Add(nameof(SignInRequestDto.Username), new [] { "Пользователь не найден!" });
+        
+        if (result.PasswordValid.HasValue && !result.PasswordValid.Value) 
+            dict.Add(nameof(SignInRequestDto.Password), new [] { "Пароль не совпадает!" });
+
+        return dict;
+    }
 }
